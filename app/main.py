@@ -4,16 +4,33 @@ Sleduje otvorené možnosti KA1/KA2 naprieč národnými agentúrami Erasmus+
 pre sektory mládeže a vzdelávania dospelých.
 """
 import json
+import os
 from datetime import date, datetime
 from pathlib import Path
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
+FINDINGS_PATH = DATA_DIR / "round_findings.json"
+
+# Admin token na potvrdzovanie nálezov. Na Renderi nastav env var ADMIN_TOKEN.
+ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "change-me-local")
+
+# Scraper spúšťame priamo vo web procese (nie samostatný cron), aby zápisy
+# nálezov videl web. Zapni cez env var RUN_SCRAPER=1.
+if os.environ.get("RUN_SCRAPER") == "1":
+    from apscheduler.schedulers.background import BackgroundScheduler
+    from app.scraper import run as run_scraper
+
+    scheduler = BackgroundScheduler(daemon=True)
+    # každý deň o 06:00 (čas servera/UTC)
+    scheduler.add_job(run_scraper, "cron", hour=6, minute=0, id="daily_scrape")
+    scheduler.start()
+
 
 app = FastAPI(title="Erasmus+ NA Tracker", version="1.0")
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
@@ -77,6 +94,99 @@ def api_actions(key_action: str | None = None, sector: str | None = None,
     })
 
 
+def load_findings() -> dict:
+    if FINDINGS_PATH.exists():
+        with open(FINDINGS_PATH, encoding="utf-8") as f:
+            return json.load(f)
+    return {"runs": [], "items": []}
+
+
+def save_findings(obj: dict):
+    with open(FINDINGS_PATH, "w", encoding="utf-8") as f:
+        json.dump(obj, f, ensure_ascii=False, indent=2)
+
+
+def build_matrix():
+    """Matica NA × akcia × kolo: kombinuje potvrdené nálezy + auto-detekcie."""
+    agencies = load_json("national_agencies.json")["agencies"]
+    findings = load_findings()
+    # zoskup nálezy podľa agentúry
+    by_agency: dict[str, list] = {}
+    for it in findings["items"]:
+        by_agency.setdefault(it["agency_code"], []).append(it)
+    rows = []
+    for ag in agencies:
+        items = by_agency.get(ag["code"], [])
+        confirmed = [i for i in items if i["status"] == "confirmed"]
+        auto = [i for i in items if i["status"] == "auto"]
+        rows.append({
+            "code": ag["code"], "country": ag["country"], "name": ag["name"],
+            "sectors": ag["sectors"], "website": ag["website"],
+            "priorities_url": ag["priorities_url"],
+            "confirmed": confirmed, "auto": auto,
+            "n_confirmed": len(confirmed), "n_auto": len(auto),
+        })
+    return rows, findings
+
+
+@app.get("/api/matrix")
+def api_matrix(action_code: str | None = None, round: int | None = None,
+               only_confirmed: bool = False):
+    rows, findings = build_matrix()
+    last_run = findings["runs"][-1] if findings["runs"] else None
+    if action_code or round is not None or only_confirmed:
+        filtered = []
+        for r in rows:
+            pool = r["confirmed"] if only_confirmed else r["confirmed"] + r["auto"]
+            match = [i for i in pool
+                     if (action_code is None or i.get("action_code") == action_code)
+                     and (round is None or i.get("round") == round)]
+            if match:
+                fr = dict(r)
+                fr["matched"] = match
+                filtered.append(fr)
+        return JSONResponse({"rows": filtered, "last_run": last_run})
+    return JSONResponse({"rows": rows, "last_run": last_run})
+
+
+@app.post("/api/findings/{idx}/confirm")
+def confirm_finding(idx: int, action_code: str, round: int, token: str):
+    if token != ADMIN_TOKEN:
+        raise HTTPException(401, "Neplatný admin token")
+    findings = load_findings()
+    if idx < 0 or idx >= len(findings["items"]):
+        raise HTTPException(404, "Nález neexistuje")
+    findings["items"][idx]["status"] = "confirmed"
+    findings["items"][idx]["action_code"] = action_code
+    findings["items"][idx]["round"] = round
+    save_findings(findings)
+    return {"ok": True, "item": findings["items"][idx]}
+
+
+@app.post("/api/findings/{idx}/reject")
+def reject_finding(idx: int, token: str):
+    if token != ADMIN_TOKEN:
+        raise HTTPException(401, "Neplatný admin token")
+    findings = load_findings()
+    if idx < 0 or idx >= len(findings["items"]):
+        raise HTTPException(404, "Nález neexistuje")
+    findings["items"][idx]["status"] = "rejected"
+    save_findings(findings)
+    return {"ok": True}
+
+
+@app.post("/api/scrape-now")
+def scrape_now(token: str):
+    """Manuálne spustenie scrapera (na otestovanie po deployi)."""
+    if token != ADMIN_TOKEN:
+        raise HTTPException(401, "Neplatný admin token")
+    from app.scraper import run as run_scraper
+    run_scraper()
+    findings = load_findings()
+    last_run = findings["runs"][-1] if findings["runs"] else None
+    return {"ok": True, "last_run": last_run}
+
+
 @app.get("/api/health")
 def health():
     return {"status": "ok", "date": date.today().isoformat()}
@@ -92,6 +202,13 @@ def index(request: Request):
     ka2 = [a for a in actions if a["key_action"] == "KA2"]
     open_count = sum(1 for a in actions if a["status"] == "open")
 
+    matrix_rows, findings = build_matrix()
+    last_run = findings["runs"][-1] if findings["runs"] else None
+    # nálezy na overenie (auto) s ich globálnym indexom pre admin akcie
+    pending = [{"idx": i, **it} for i, it in enumerate(findings["items"])
+               if it["status"] == "auto"]
+    n_open_nas = sum(1 for r in matrix_rows if r["n_confirmed"] > 0)
+
     return templates.TemplateResponse("index.html", {
         "request": request,
         "agencies": agencies_data["agencies"],
@@ -103,4 +220,9 @@ def index(request: Request):
         "agency_count": len(agencies_data["agencies"]),
         "today": date.today().isoformat(),
         "meta": actions_data["_meta"],
+        "matrix": matrix_rows,
+        "pending": pending,
+        "last_run": last_run,
+        "n_open_nas": n_open_nas,
+        "tracked_actions": actions,
     })

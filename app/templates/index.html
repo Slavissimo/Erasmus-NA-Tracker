@@ -16,14 +16,88 @@
       <h1>Sledovač možností <span class="accent">KA1 &amp; KA2</span></h1>
       <p class="sub">Otvorené výzvy naprieč národnými agentúrami pre sektory mládeže a vzdelávania dospelých. Stav k {{ today }}.</p>
       <div class="statbar">
-        <div class="stat"><span class="num">{{ open_count }}</span><span class="lbl">otvorených akcií</span></div>
+        <div class="stat"><span class="num">{{ n_open_nas }}</span><span class="lbl">NA s potvrdeným kolom</span></div>
+        <div class="stat"><span class="num">{{ open_count }}</span><span class="lbl">otvorených akcií (EÚ)</span></div>
         <div class="stat"><span class="num">{{ agency_count }}</span><span class="lbl">národných agentúr</span></div>
-        <div class="stat"><span class="num">{{ total_actions }}</span><span class="lbl">akcií celkom</span></div>
+        {% if pending %}<div class="stat alert"><span class="num">{{ pending|length }}</span><span class="lbl">nálezov na overenie</span></div>{% endif %}
       </div>
     </div>
   </header>
 
   <main class="wrap">
+    <section class="matrix-block">
+      <h2>Ktoré NA otvorili ktoré kolo</h2>
+      <p class="note">Hlavný prehľad: ktoré národné agentúry otvorili podávanie pre danú akciu a kolo — nástroj na hľadanie krajín s partnermi. <strong>Potvrdené</strong> nálezy sú overené človekom; <strong>auto</strong> sú strojové detekcie zo scrapera, ktoré treba overiť (môžu byť nepresné).</p>
+
+      <div class="matrix-controls">
+        <label>Akcia
+          <select id="m-action">
+            <option value="">— všetky —</option>
+            {% for a in tracked_actions %}<option value="{{ a.code }}">{{ a.code }} · {{ a.title }}</option>{% endfor %}
+          </select>
+        </label>
+        <label>Kolo
+          <select id="m-round">
+            <option value="">— všetky —</option>
+            <option value="1">1. kolo</option>
+            <option value="2">2. kolo</option>
+          </select>
+        </label>
+        <label class="chk"><input type="checkbox" id="m-confirmed"> Len potvrdené</label>
+        <button id="m-export" class="btn">Exportovať zoznam krajín</button>
+      </div>
+
+      <div id="matrix-result" class="matrix-grid">
+        {% for r in matrix %}
+        <div class="m-card {{ 'has-confirmed' if r.n_confirmed else ('has-auto' if r.n_auto else 'empty') }}"
+             data-country="{{ r.country }}" data-code="{{ r.code }}">
+          <div class="m-head">
+            <span class="m-ctry">{{ r.country }}</span>
+            {% if r.n_confirmed %}<span class="badge confirmed">{{ r.n_confirmed }} potvrdené</span>{% endif %}
+            {% if r.n_auto %}<span class="badge auto">{{ r.n_auto }} auto</span>{% endif %}
+            {% if not r.n_confirmed and not r.n_auto %}<span class="badge none">žiadny nález</span>{% endif %}
+          </div>
+          <div class="m-body">
+            {% for c in r.confirmed %}
+            <div class="m-item confirmed">{{ c.action_code }} · {{ c.round }}. kolo</div>
+            {% endfor %}
+            {% for a in r.auto %}
+            <div class="m-item auto" title="{{ a.snippet }}">⚠ {{ a.word }} <a href="{{ a.url }}" target="_blank" rel="noopener">zdroj↗</a></div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    {% if pending %}
+    <section class="pending-block">
+      <h2>Nálezy na overenie <span class="count">{{ pending|length }}</span></h2>
+      <p class="note">Scraper našiel na týchto weboch zmenu so signálnym slovom. Over zdroj a potvrď, ktorá akcia a kolo to je — alebo zamietni. Potvrdenie vyžaduje admin token.</p>
+      <div class="pending-list">
+        {% for p in pending %}
+        <div class="p-item" data-idx="{{ p.idx }}">
+          <div class="p-info">
+            <strong>{{ p.country }}</strong>
+            <span class="p-word">{{ p.word }}</span>
+            <a href="{{ p.url }}" target="_blank" rel="noopener">zdroj ↗</a>
+            <p class="p-snip">„{{ p.snippet }}"</p>
+          </div>
+          <div class="p-actions">
+            <select class="p-action-code">
+              <option value="">akcia…</option>
+              {% for a in tracked_actions %}<option value="{{ a.code }}">{{ a.code }}</option>{% endfor %}
+            </select>
+            <select class="p-round"><option value="1">1.kolo</option><option value="2">2.kolo</option></select>
+            <button class="btn confirm">Potvrdiť</button>
+            <button class="btn reject">Zamietnuť</button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
     <section class="actions-block">
       <div class="ka-col">
         <h2 class="ka-head"><span class="ka-tag ka1">KA1</span> Mobilita jednotlivcov</h2>

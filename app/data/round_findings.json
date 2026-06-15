@@ -1,0 +1,346 @@
+{
+  "runs": [
+    {
+      "timestamp": "2026-06-15T12:21:40.845345+00:00",
+      "results": [
+        {
+          "agency_code": "AT",
+          "country": "Austria",
+          "url": "https://erasmusplus.at/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "BE-fr",
+          "country": "Belgium (FR)",
+          "url": "https://www.aef-europe.be/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "BE-fr-y",
+          "country": "Belgium (FR - Youth)",
+          "url": "https://www.lebij.be/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "BE-nl",
+          "country": "Belgium (NL)",
+          "url": "https://www.epos-vlaanderen.be/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "BE-nl-y",
+          "country": "Belgium (NL - Youth)",
+          "url": "https://www.jint.be/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "BE-de",
+          "country": "Belgium (DE)",
+          "url": "https://www.jugendbuero.be/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "BG",
+          "country": "Bulgaria",
+          "url": "https://www.hrdc.bg/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "HR",
+          "country": "Croatia",
+          "url": "https://www.ampeu.hr/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "CY",
+          "country": "Cyprus",
+          "url": "https://www.erasmusplus.cy/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "CZ",
+          "country": "Czechia",
+          "url": "https://www.dzs.cz/program/erasmus",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "DK",
+          "country": "Denmark",
+          "url": "https://ufm.dk/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "EE",
+          "country": "Estonia",
+          "url": "https://harno.ee/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "FI",
+          "country": "Finland",
+          "url": "https://www.oph.fi/en/programmes/erasmus",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "FR",
+          "country": "France",
+          "url": "https://agence.erasmusplus.fr/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "FR-y",
+          "country": "France (Youth)",
+          "url": "https://www.erasmusplus-jeunesse.fr/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "DE",
+          "country": "Germany",
+          "url": "https://www.na-bibb.de/erwachsenenbildung/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "DE-y",
+          "country": "Germany (Youth)",
+          "url": "https://www.jugendfuereuropa.de/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "EL",
+          "country": "Greece",
+          "url": "https://www.iky.gr/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "HU",
+          "country": "Hungary",
+          "url": "https://tka.hu/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "IS",
+          "country": "Iceland",
+          "url": "https://www.rannis.is/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "IE",
+          "country": "Ireland",
+          "url": "https://www.leargas.ie/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "IT",
+          "country": "Italy",
+          "url": "https://www.erasmusplus.it/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "IT-y",
+          "country": "Italy (Youth)",
+          "url": "https://agenziagiovani.it/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "LV",
+          "country": "Latvia",
+          "url": "https://www.viaa.gov.lv/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "LI",
+          "country": "Liechtenstein",
+          "url": "https://www.aiba.llv.li/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "LT",
+          "country": "Lithuania",
+          "url": "https://www.smpf.lt/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "LU",
+          "country": "Luxembourg",
+          "url": "https://www.anefore.lu/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "MT",
+          "country": "Malta",
+          "url": "https://eupa.org.mt/",
+          "status": "error",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "NL",
+          "country": "Netherlands",
+          "url": "https://www.erasmusplus.nl/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "NL-y",
+          "country": "Netherlands (Youth)",
+          "url": "https://www.erasmusplus.nl/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "MK",
+          "country": "North Macedonia",
+          "url": "https://www.na.org.mk/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "NO",
+          "country": "Norway",
+          "url": "https://hkdir.no/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "PL",
+          "country": "Poland",
+          "url": "https://erasmusplus.org.pl/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "PT",
+          "country": "Portugal",
+          "url": "https://www.erasmus.pt/",
+          "status": "error",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "RO",
+          "country": "Romania",
+          "url": "https://www.erasmusplus.ro/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "RS",
+          "country": "Serbia",
+          "url": "https://erasmusplus.rs/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "SK",
+          "country": "Slovakia",
+          "url": "https://www.erasmusplus.sk/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "SK-y",
+          "country": "Slovakia (Youth)",
+          "url": "https://www.erasmusplus.sk/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "SI",
+          "country": "Slovenia",
+          "url": "https://www.cmepius.si/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "ES",
+          "country": "Spain",
+          "url": "https://www.erasmusplus.gob.es/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "SE",
+          "country": "Sweden",
+          "url": "https://www.utbyten.se/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        },
+        {
+          "agency_code": "TR",
+          "country": "Turkey",
+          "url": "https://www.ua.gov.tr/",
+          "status": "blocked",
+          "changed": false,
+          "signal_count": 0
+        }
+      ]
+    }
+  ],
+  "items": []
+}
