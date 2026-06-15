@@ -66,3 +66,21 @@ python -m app.scraper                  # ručné spustenie scrapera
 - `GET /api/agencies?sector=youth` · `GET /api/actions`
 - `POST /api/findings/{idx}/confirm?action_code=..&round=..&token=..`
 - `POST /api/findings/{idx}/reject?token=..`
+
+## Public vs. admin view
+- **Public** (the plain URL): sees only confirmed rounds in the matrix + filter +
+  country-list export. No auto findings, no review section, no buttons.
+- **Admin**: open the site with `?admin=YOUR_TOKEN` in the URL, e.g.
+  `https://erasmus-na-tracker.onrender.com/?admin=YOUR_TOKEN`. Then you also see
+  auto findings and the "Findings to review" section to confirm/reject.
+
+NOTE: This is a soft gate, fine for a public list of Erasmus rounds. The token in
+the URL is not strong security — don't put confidential data behind it. The
+confirm/reject API endpoints are token-protected so the public can't change data.
+
+## Source URLs (where a finding came from)
+The scraper fetches each NA landing page, then follows up to a few call-related
+links one level deep, and stores the EXACT sub-page URL where a signal was found
+(plus the anchor text it came through, shown as "via:"). So source links point to
+the actual announcement/article, not just the landing page. Sites that block bots
+or have no crawlable links will still only yield the landing page or nothing.

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="sk">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Erasmus+ Tracker · KA1/KA2 · Mládež a vzdelávanie dospelých</title>
+  <title>Erasmus+ Tracker · KA1/KA2 · Youth &amp; Adult Education</title>
   <link rel="stylesheet" href="/static/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,39 +12,44 @@
 <body>
   <header class="masthead">
     <div class="wrap">
-      <div class="eyebrow">Erasmus+ · Výzva 2026 · Decentralizované akcie</div>
-      <h1>Sledovač možností <span class="accent">KA1 &amp; KA2</span></h1>
-      <p class="sub">Otvorené výzvy naprieč národnými agentúrami pre sektory mládeže a vzdelávania dospelých. Stav k {{ today }}.</p>
+      {% if is_admin %}
+        <a class="admin-toggle" href="/">Exit admin</a>
+      {% else %}
+        <button class="admin-toggle" id="admin-open">Admin</button>
+      {% endif %}
+      <div class="eyebrow">Erasmus+ · 2026 Call · Decentralised actions{% if is_admin %} · ADMIN{% endif %}</div>
+      <h1>National Agency <span class="accent">round tracker</span></h1>
+      <p class="sub">Which National Agencies have opened KA1/KA2 applications, by action and round — so you know where to look for partners. Youth &amp; adult education. Status as of {{ today }}.</p>
       <div class="statbar">
-        <div class="stat"><span class="num">{{ n_open_nas }}</span><span class="lbl">NA s potvrdeným kolom</span></div>
-        <div class="stat"><span class="num">{{ open_count }}</span><span class="lbl">otvorených akcií (EÚ)</span></div>
-        <div class="stat"><span class="num">{{ agency_count }}</span><span class="lbl">národných agentúr</span></div>
-        {% if pending %}<div class="stat alert"><span class="num">{{ pending|length }}</span><span class="lbl">nálezov na overenie</span></div>{% endif %}
+        <div class="stat"><span class="num">{{ n_open_nas }}</span><span class="lbl">NAs with confirmed round</span></div>
+        <div class="stat"><span class="num">{{ open_count }}</span><span class="lbl">open actions (EU-wide)</span></div>
+        <div class="stat"><span class="num">{{ agency_count }}</span><span class="lbl">national agencies</span></div>
+        {% if is_admin and pending %}<div class="stat alert"><span class="num">{{ pending|length }}</span><span class="lbl">findings to review</span></div>{% endif %}
       </div>
     </div>
   </header>
 
   <main class="wrap">
     <section class="matrix-block">
-      <h2>Ktoré NA otvorili ktoré kolo</h2>
-      <p class="note">Hlavný prehľad: ktoré národné agentúry otvorili podávanie pre danú akciu a kolo — nástroj na hľadanie krajín s partnermi. <strong>Potvrdené</strong> nálezy sú overené človekom; <strong>auto</strong> sú strojové detekcie zo scrapera, ktoré treba overiť (môžu byť nepresné).</p>
+      <h2>Which NAs opened which round</h2>
+      <p class="note">{% if is_admin %}<strong>Confirmed</strong> rounds (green) are human-verified. <strong>Auto</strong> findings (amber) are machine detections from the scraper — review them below before they go public.{% else %}This shows National Agencies with a confirmed open round. Use the filter to find countries for a given action and round.{% endif %}</p>
 
       <div class="matrix-controls">
-        <label>Akcia
+        <label>Action
           <select id="m-action">
-            <option value="">— všetky —</option>
+            <option value="">— all —</option>
             {% for a in tracked_actions %}<option value="{{ a.code }}">{{ a.code }} · {{ a.title }}</option>{% endfor %}
           </select>
         </label>
-        <label>Kolo
+        <label>Round
           <select id="m-round">
-            <option value="">— všetky —</option>
-            <option value="1">1. kolo</option>
-            <option value="2">2. kolo</option>
+            <option value="">— all —</option>
+            <option value="1">Round 1</option>
+            <option value="2">Round 2</option>
           </select>
         </label>
-        <label class="chk"><input type="checkbox" id="m-confirmed"> Len potvrdené</label>
-        <button id="m-export" class="btn">Exportovať zoznam krajín</button>
+        {% if is_admin %}<label class="chk"><input type="checkbox" id="m-confirmed"> Confirmed only</label>{% endif %}
+        <button id="m-export" class="btn">Copy country list</button>
       </div>
 
       <div id="matrix-result" class="matrix-grid">
@@ -53,16 +58,16 @@
              data-country="{{ r.country }}" data-code="{{ r.code }}">
           <div class="m-head">
             <span class="m-ctry">{{ r.country }}</span>
-            {% if r.n_confirmed %}<span class="badge confirmed">{{ r.n_confirmed }} potvrdené</span>{% endif %}
+            {% if r.n_confirmed %}<span class="badge confirmed">{{ r.n_confirmed }} confirmed</span>{% endif %}
             {% if r.n_auto %}<span class="badge auto">{{ r.n_auto }} auto</span>{% endif %}
-            {% if not r.n_confirmed and not r.n_auto %}<span class="badge none">žiadny nález</span>{% endif %}
+            {% if not r.n_confirmed and not r.n_auto %}<span class="badge none">no round</span>{% endif %}
           </div>
           <div class="m-body">
             {% for c in r.confirmed %}
-            <div class="m-item confirmed">{{ c.action_code }} · {{ c.round }}. kolo</div>
+            <div class="m-item confirmed">{{ c.action_code }} · Round {{ c.round }}{% if c.url %} <a href="{{ c.url }}" target="_blank" rel="noopener">source↗</a>{% endif %}</div>
             {% endfor %}
             {% for a in r.auto %}
-            <div class="m-item auto" title="{{ a.snippet }}">⚠ {{ a.word }} <a href="{{ a.url }}" target="_blank" rel="noopener">zdroj↗</a></div>
+            <div class="m-item auto" title="{{ a.snippet }}">⚠ {{ a.word }} <a href="{{ a.url }}" target="_blank" rel="noopener">source↗</a></div>
             {% endfor %}
           </div>
         </div>
@@ -70,27 +75,28 @@
       </div>
     </section>
 
-    {% if pending %}
+    {% if is_admin and pending %}
     <section class="pending-block">
-      <h2>Nálezy na overenie <span class="count">{{ pending|length }}</span></h2>
-      <p class="note">Scraper našiel na týchto weboch zmenu so signálnym slovom. Over zdroj a potvrď, ktorá akcia a kolo to je — alebo zamietni. Potvrdenie vyžaduje admin token.</p>
+      <h2>Findings to review <span class="count">{{ pending|length }}</span></h2>
+      <p class="note">The scraper detected a change containing a signal word at these source URLs. Open the source, then confirm which action and round it is — or reject it. Confirming requires the admin token.</p>
       <div class="pending-list">
         {% for p in pending %}
         <div class="p-item" data-idx="{{ p.idx }}">
           <div class="p-info">
             <strong>{{ p.country }}</strong>
             <span class="p-word">{{ p.word }}</span>
-            <a href="{{ p.url }}" target="_blank" rel="noopener">zdroj ↗</a>
-            <p class="p-snip">„{{ p.snippet }}"</p>
+            <a href="{{ p.url }}" target="_blank" rel="noopener">source ↗</a>
+            {% if p.via %}<span class="p-via">via: {{ p.via }}</span>{% endif %}
+            <p class="p-snip">“{{ p.snippet }}”</p>
           </div>
           <div class="p-actions">
             <select class="p-action-code">
-              <option value="">akcia…</option>
+              <option value="">action…</option>
               {% for a in tracked_actions %}<option value="{{ a.code }}">{{ a.code }}</option>{% endfor %}
             </select>
-            <select class="p-round"><option value="1">1.kolo</option><option value="2">2.kolo</option></select>
-            <button class="btn confirm">Potvrdiť</button>
-            <button class="btn reject">Zamietnuť</button>
+            <select class="p-round"><option value="1">R1</option><option value="2">R2</option></select>
+            <button class="btn confirm">Confirm</button>
+            <button class="btn reject">Reject</button>
           </div>
         </div>
         {% endfor %}
@@ -100,46 +106,46 @@
 
     <section class="actions-block">
       <div class="ka-col">
-        <h2 class="ka-head"><span class="ka-tag ka1">KA1</span> Mobilita jednotlivcov</h2>
+        <h2 class="ka-head"><span class="ka-tag ka1">KA1</span> Learning mobility</h2>
         {% for a in ka1 %}
         <article class="action {{ a.status }}">
           <div class="action-top">
             <span class="code">{{ a.code }}</span>
-            <span class="sector {{ a.sector }}">{{ 'Mládež' if a.sector == 'youth' else 'Dospelí' }}</span>
+            <span class="sector {{ a.sector }}">{{ 'Youth' if a.sector == 'youth' else 'Adult' }}</span>
           </div>
           <h3>{{ a.title }}</h3>
           <p class="aud">{{ a.audience }}</p>
           <div class="action-foot">
             {% if a.status == 'open' %}
-              <span class="deadline open">Termín {{ a.next_deadline }}</span>
-              <span class="days {{ 'urgent' if a.days_left <= 30 else '' }}">{{ a.days_left }} dní</span>
+              <span class="deadline open">Deadline {{ a.next_deadline }}</span>
+              <span class="days {{ 'urgent' if a.days_left <= 30 else '' }}">{{ a.days_left }} days</span>
             {% else %}
-              <span class="deadline closed">Aktuálne zatvorené</span>
+              <span class="deadline closed">Currently closed</span>
             {% endif %}
-            <a class="info" href="{{ a.info_url }}" target="_blank" rel="noopener">Detail ↗</a>
+            <a class="info" href="{{ a.info_url }}" target="_blank" rel="noopener">Details ↗</a>
           </div>
         </article>
         {% endfor %}
       </div>
 
       <div class="ka-col">
-        <h2 class="ka-head"><span class="ka-tag ka2">KA2</span> Spolupráca organizácií</h2>
+        <h2 class="ka-head"><span class="ka-tag ka2">KA2</span> Cooperation among organisations</h2>
         {% for a in ka2 %}
         <article class="action {{ a.status }}">
           <div class="action-top">
             <span class="code">{{ a.code }}</span>
-            <span class="sector {{ a.sector }}">{{ 'Mládež' if a.sector == 'youth' else 'Dospelí' }}</span>
+            <span class="sector {{ a.sector }}">{{ 'Youth' if a.sector == 'youth' else 'Adult' }}</span>
           </div>
           <h3>{{ a.title }}</h3>
           <p class="aud">{{ a.audience }}</p>
           <div class="action-foot">
             {% if a.status == 'open' %}
-              <span class="deadline open">Termín {{ a.next_deadline }}</span>
-              <span class="days {{ 'urgent' if a.days_left <= 30 else '' }}">{{ a.days_left }} dní</span>
+              <span class="deadline open">Deadline {{ a.next_deadline }}</span>
+              <span class="days {{ 'urgent' if a.days_left <= 30 else '' }}">{{ a.days_left }} days</span>
             {% else %}
-              <span class="deadline closed">Aktuálne zatvorené</span>
+              <span class="deadline closed">Currently closed</span>
             {% endif %}
-            <a class="info" href="{{ a.info_url }}" target="_blank" rel="noopener">Detail ↗</a>
+            <a class="info" href="{{ a.info_url }}" target="_blank" rel="noopener">Details ↗</a>
           </div>
         </article>
         {% endfor %}
@@ -147,8 +153,8 @@
     </section>
 
     <section class="priorities">
-      <h2>Horizontálne priority EÚ 2026</h2>
-      <p class="note">Platia pre všetky NA. Národné priority jednotlivých agentúr nájdete cez odkaz v tabuľke nižšie — zverejňujú sa samostatne, často v národnom jazyku.</p>
+      <h2>EU horizontal priorities 2026</h2>
+      <p class="note">These apply to all NAs. Each agency also publishes national priorities separately (often in PDF, in the national language) — see the link in the table below.</p>
       <div class="prio-grid">
         {% for p in priorities %}
         <div class="prio"><h4>{{ p.name }}</h4><p>{{ p.desc }}</p></div>
@@ -157,21 +163,21 @@
     </section>
 
     <section class="agencies">
-      <h2>Národné agentúry</h2>
-      <p class="note">Priority a štatistiky podaných/schválených projektov nie sú dostupné cez jednotné API — preto odkazujeme priamo na zdroj každej NA, kde sa zverejňujú (zvyčajne vo výročných správach).</p>
-      <input type="text" id="filter" placeholder="Filtrovať krajinu alebo agentúru…">
+      <h2>National agencies</h2>
+      <p class="note">Priorities and statistics of submitted/approved projects are not available via a single API — we link directly to each NA's source where they are published (usually in annual reports).</p>
+      <input type="text" id="filter" placeholder="Filter country or agency…">
       <table id="agtable">
         <thead>
-          <tr><th>Krajina</th><th>Agentúra</th><th>Sektory</th><th>Priority</th><th>Štatistiky</th></tr>
+          <tr><th>Country</th><th>Agency</th><th>Sectors</th><th>Priorities</th><th>Statistics</th></tr>
         </thead>
         <tbody>
           {% for ag in agencies %}
           <tr>
             <td class="ctry">{{ ag.country }}</td>
             <td><a href="{{ ag.website }}" target="_blank" rel="noopener">{{ ag.name }}</a></td>
-            <td>{% for s in ag.sectors %}<span class="chip {{ s }}">{{ 'Mládež' if s == 'youth' else ('Dospelí' if s == 'adult' else s) }}</span>{% endfor %}</td>
-            <td><a href="{{ ag.priorities_url }}" target="_blank" rel="noopener">Priority ↗</a></td>
-            <td><a href="{{ ag.stats_url }}" target="_blank" rel="noopener">Zdroj ↗</a></td>
+            <td>{% for s in ag.sectors %}<span class="chip {{ s }}">{{ 'Youth' if s == 'youth' else ('Adult' if s == 'adult' else s) }}</span>{% endfor %}</td>
+            <td><a href="{{ ag.priorities_url }}" target="_blank" rel="noopener">Priorities ↗</a></td>
+            <td><a href="{{ ag.stats_url }}" target="_blank" rel="noopener">Source ↗</a></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -180,10 +186,25 @@
   </main>
 
   <footer class="wrap">
-    <p>Termíny sú orientačné (Bruselský čas) a podliehajú zmenám korigendom — vždy overte v aplikačnom formulári. Niektoré NA otvárajú druhé kolo.</p>
-    <p class="src">Zdroj akcií: Erasmus+ Programme Guide 2026 · Zoznam NA: Európska komisia</p>
+    <p>Deadlines are indicative (Brussels time) and subject to change by corrigendum — always verify in the application form. Some NAs open a second round.</p>
+    <p class="src">Action source: Erasmus+ Programme Guide 2026 · NA list: European Commission</p>
   </footer>
 
+  {% if not is_admin %}
+  <div class="admin-modal" id="admin-modal" hidden>
+    <div class="admin-box">
+      <h3>Admin access</h3>
+      <p>Enter the admin password to manage findings.</p>
+      <input type="password" id="admin-pass" placeholder="Password" autocomplete="off">
+      <div class="admin-box-actions">
+        <button class="btn" id="admin-go">Enter</button>
+        <button class="btn ghost" id="admin-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <script>window.IS_ADMIN = {{ 'true' if is_admin else 'false' }};</script>
   <script src="/static/app.js"></script>
 </body>
 </html>

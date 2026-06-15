@@ -131,13 +131,19 @@ def build_matrix():
 
 @app.get("/api/matrix")
 def api_matrix(action_code: str | None = None, round: int | None = None,
-               only_confirmed: bool = False):
+               only_confirmed: bool = False, admin: str | None = None):
+    is_admin = admin is not None and admin == ADMIN_TOKEN
     rows, findings = build_matrix()
+    # Public callers never receive auto findings via the API.
+    if not is_admin:
+        for r in rows:
+            r["auto"] = []
+            r["n_auto"] = 0
     last_run = findings["runs"][-1] if findings["runs"] else None
     if action_code or round is not None or only_confirmed:
         filtered = []
         for r in rows:
-            pool = r["confirmed"] if only_confirmed else r["confirmed"] + r["auto"]
+            pool = r["confirmed"] if (only_confirmed or not is_admin) else r["confirmed"] + r["auto"]
             match = [i for i in pool
                      if (action_code is None or i.get("action_code") == action_code)
                      and (round is None or i.get("round") == round)]
@@ -152,10 +158,10 @@ def api_matrix(action_code: str | None = None, round: int | None = None,
 @app.post("/api/findings/{idx}/confirm")
 def confirm_finding(idx: int, action_code: str, round: int, token: str):
     if token != ADMIN_TOKEN:
-        raise HTTPException(401, "Neplatný admin token")
+        raise HTTPException(401, "Invalid admin token")
     findings = load_findings()
     if idx < 0 or idx >= len(findings["items"]):
-        raise HTTPException(404, "Nález neexistuje")
+        raise HTTPException(404, "Finding not found")
     findings["items"][idx]["status"] = "confirmed"
     findings["items"][idx]["action_code"] = action_code
     findings["items"][idx]["round"] = round
@@ -166,10 +172,10 @@ def confirm_finding(idx: int, action_code: str, round: int, token: str):
 @app.post("/api/findings/{idx}/reject")
 def reject_finding(idx: int, token: str):
     if token != ADMIN_TOKEN:
-        raise HTTPException(401, "Neplatný admin token")
+        raise HTTPException(401, "Invalid admin token")
     findings = load_findings()
     if idx < 0 or idx >= len(findings["items"]):
-        raise HTTPException(404, "Nález neexistuje")
+        raise HTTPException(404, "Finding not found")
     findings["items"][idx]["status"] = "rejected"
     save_findings(findings)
     return {"ok": True}
@@ -177,9 +183,9 @@ def reject_finding(idx: int, token: str):
 
 @app.post("/api/scrape-now")
 def scrape_now(token: str):
-    """Manuálne spustenie scrapera (na otestovanie po deployi)."""
+    """Manual scraper trigger (for testing after deploy)."""
     if token != ADMIN_TOKEN:
-        raise HTTPException(401, "Neplatný admin token")
+        raise HTTPException(401, "Invalid admin token")
     from app.scraper import run as run_scraper
     run_scraper()
     findings = load_findings()
@@ -193,7 +199,8 @@ def health():
 
 
 @app.get("/", response_class=HTMLResponse)
-def index(request: Request):
+def index(request: Request, admin: str | None = None):
+    is_admin = admin is not None and admin == ADMIN_TOKEN
     agencies_data = load_json("national_agencies.json")
     actions_data = load_json("actions_2026.json")
     actions = enrich_actions(actions_data["actions"])
@@ -204,13 +211,20 @@ def index(request: Request):
 
     matrix_rows, findings = build_matrix()
     last_run = findings["runs"][-1] if findings["runs"] else None
-    # nálezy na overenie (auto) s ich globálnym indexom pre admin akcie
+    # Pending findings only matter for admins.
     pending = [{"idx": i, **it} for i, it in enumerate(findings["items"])
-               if it["status"] == "auto"]
+               if it["status"] == "auto"] if is_admin else []
     n_open_nas = sum(1 for r in matrix_rows if r["n_confirmed"] > 0)
+
+    # Public users see only confirmed rounds — strip auto findings from cards.
+    if not is_admin:
+        for r in matrix_rows:
+            r["auto"] = []
+            r["n_auto"] = 0
 
     return templates.TemplateResponse("index.html", {
         "request": request,
+        "is_admin": is_admin,
         "agencies": agencies_data["agencies"],
         "ka1": ka1,
         "ka2": ka2,
