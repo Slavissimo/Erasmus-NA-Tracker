@@ -1,0 +1,136 @@
+{
+  "_meta": {
+    "description": "Decentralizované akcie KA1 a KA2 spravované národnými agentúrami pre sektory mládeže a vzdelávania dospelých, výzva 2026. Termíny sú jednotné na úrovni EÚ (Bruselský čas); niektoré NA pridávajú druhé kolo - vždy overiť na webe konkrétnej NA. Zdroj: Erasmus+ Programme Guide 2026.",
+    "source": "https://erasmus-plus.ec.europa.eu/document/erasmus-programme-guide-2026",
+    "call_year": 2026,
+    "note": "Termíny overiť priamo v aplikačnom formulári - sú orientačné a podliehajú zmenám korigendom."
+  },
+  "horizontal_priorities": [
+    {"name": "Inklúzia a diverzita", "desc": "Zabezpečenie spravodlivého prístupu a účasti pre všetkých, najmä pre ľudí s nedostatkom príležitostí."},
+    {"name": "Digitálna transformácia", "desc": "Rozvoj digitálnych kompetencií, využitie AI vo vzdelávaní a integrácia stratégií digitálneho vzdelávania."},
+    {"name": "Životné prostredie a boj proti klimatickej zmene", "desc": "Podpora zelených kompetencií a udržateľného správania."},
+    {"name": "Participácia na demokratickom živote", "desc": "Posilnenie občianskej angažovanosti a účasti na demokratickom živote."}
+  ],
+  "actions": [
+    {
+      "key_action": "KA1",
+      "code": "KA122-ADU",
+      "title": "Krátkodobé projekty mobility – vzdelávanie dospelých",
+      "sector": "adult",
+      "audience": "Organizácie bez akreditácie (jednorazové projekty)",
+      "deadlines_2026": ["2026-02-20", "2026-10-01"],
+      "managed_by": "Národná agentúra",
+      "info_url": "https://erasmus-plus.ec.europa.eu/programme-guide/part-b/key-action-1"
+    },
+    {
+      "key_action": "KA1",
+      "code": "KA121-ADU",
+      "title": "Akreditované projekty mobility – vzdelávanie dospelých",
+      "sector": "adult",
+      "audience": "Akreditované organizácie",
+      "deadlines_2026": ["2026-02-20"],
+      "managed_by": "Národná agentúra",
+      "info_url": "https://erasmus-plus.ec.europa.eu/programme-guide/part-b/key-action-1"
+    },
+    {
+      "key_action": "KA1",
+      "code": "KA151-YOU",
+      "title": "Akreditované projekty mobility mládeže",
+      "sector": "youth",
+      "audience": "Akreditované organizácie v oblasti mládeže",
+      "deadlines_2026": ["2026-02-20"],
+      "managed_by": "Národná agentúra",
+      "info_url": "https://erasmus-plus.ec.europa.eu/programme-guide/part-b/key-action-1/accreditation-youth"
+    },
+    {
+      "key_action": "KA1",
+      "code": "KA152-YOU",
+      "title": "Výmeny mládeže (Youth Exchanges)",
+      "sector": "youth",
+      "audience": "Organizácie a neformálne skupiny mladých",
+      "deadlines_2026": ["2026-02-20", "2026-10-01"],
+      "managed_by": "Národná agentúra",
+      "info_url": "https://erasmus-plus.ec.europa.eu/programme-guide/part-b/key-action-1"
+    },
+    {
+      "key_action": "KA1",
+      "code": "KA153-YOU",
+      "title": "Mobilita pracovníkov s mládežou (Youth Workers)",
+      "sector": "youth",
+      "audience": "Organizácie aktívne v práci s mládežou",
+      "deadlines_2026": ["2026-02-20", "2026-10-01"],
+      "managed_by": "Národná agentúra",
+      "info_url": "https://erasmus-plus.ec.europa.eu/programme-guide/part-b/key-action-1"
+    },
+    {
+      "key_action": "KA1",
+      "code": "KA154-YOU",
+      "title": "Aktivity participácie mládeže",
+      "sector": "youth",
+      "audience": "Organizácie a neformálne skupiny mladých",
+      "deadlines_2026": ["2026-02-20", "2026-10-01"],
+      "managed_by": "Národná agentúra",
+      "info_url": "https://erasmus-plus.ec.europa.eu/programme-guide/part-b/key-action-1"
+    },
+    {
+      "key_action": "KA1",
+      "code": "ACCREDITATION-YOU",
+      "title": "Akreditácia Erasmus v oblasti mládeže",
+      "sector": "youth",
+      "audience": "Organizácie chcúce dlhodobý prístup ku KA1",
+      "deadlines_2026": ["2026-09-29"],
+      "managed_by": "Národná agentúra",
+      "info_url": "https://erasmus-plus.ec.europa.eu/programme-guide/part-b/key-action-1/accreditation-youth"
+    },
+    {
+      "key_action": "KA1",
+      "code": "ACCREDITATION-ADU",
+      "title": "Akreditácia Erasmus – vzdelávanie dospelých",
+      "sector": "adult",
+      "audience": "Organizácie chcúce dlhodobý prístup ku KA1",
+      "deadlines_2026": ["2026-09-29"],
+      "managed_by": "Národná agentúra",
+      "info_url": "https://erasmus-plus.ec.europa.eu/programme-guide/part-b/key-action-1"
+    },
+    {
+      "key_action": "KA2",
+      "code": "KA210-ADU",
+      "title": "Malé partnerstvá (Small-scale Partnerships) – vzdelávanie dospelých",
+      "sector": "adult",
+      "audience": "Menšie organizácie, nováčikovia v programe",
+      "deadlines_2026": ["2026-03-05", "2026-10-01"],
+      "managed_by": "Národná agentúra",
+      "info_url": "https://erasmus-plus.ec.europa.eu/programme-guide/part-b/key-action-2"
+    },
+    {
+      "key_action": "KA2",
+      "code": "KA220-ADU",
+      "title": "Kooperačné partnerstvá – vzdelávanie dospelých",
+      "sector": "adult",
+      "audience": "Skúsenejšie organizácie, väčšie projekty",
+      "deadlines_2026": ["2026-03-05"],
+      "managed_by": "Národná agentúra",
+      "info_url": "https://erasmus-plus.ec.europa.eu/programme-guide/part-b/key-action-2"
+    },
+    {
+      "key_action": "KA2",
+      "code": "KA210-YOU",
+      "title": "Malé partnerstvá (Small-scale Partnerships) – mládež",
+      "sector": "youth",
+      "audience": "Menšie organizácie, nováčikovia v programe",
+      "deadlines_2026": ["2026-03-05", "2026-10-01"],
+      "managed_by": "Národná agentúra",
+      "info_url": "https://erasmus-plus.ec.europa.eu/programme-guide/part-b/key-action-2"
+    },
+    {
+      "key_action": "KA2",
+      "code": "KA220-YOU",
+      "title": "Kooperačné partnerstvá – mládež",
+      "sector": "youth",
+      "audience": "Skúsenejšie organizácie, väčšie projekty",
+      "deadlines_2026": ["2026-03-05"],
+      "managed_by": "Národná agentúra",
+      "info_url": "https://erasmus-plus.ec.europa.eu/programme-guide/part-b/key-action-2"
+    }
+  ]
+}
